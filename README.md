@@ -68,6 +68,8 @@ El diseño de la arquitectura de este proyecto es el siguiente:
 
 ## 5. Otra Información Relevante
 
+link al video sustentación: https://youtu.be/OZqM46A6asc
+
 - **Recursos:**
   - Guía de instalación de MicroK8s: [https://microk8s.io/](https://microk8s.io/)
   - Video introductorio a Kubernetes y recursos de referencia del Reto 2:
