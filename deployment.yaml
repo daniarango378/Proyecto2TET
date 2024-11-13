@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  namespace: wordpress
+spec:
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      initContainers:
+      - name: init-wordpress
+        image: wordpress:latest
+        command: ["sh", "-c", "chown -R 1000:1000 /var/www/html"]
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+      containers:
+      - name: wordpress
+        image: wordpress:latest
+        ports:
+        - containerPort: 8080  # Cambiado a 8080 para evitar el uso de puertos inferiores a 1024
+        env:
+        - name: WORDPRESS_DB_HOST
+          value: "ip-172-31-92-148.ec2.internal"  # Cambia a la IP interna de MySQL
+        - name: WORDPRESS_DB_NAME
+          value: "wordpress"
+        - name: WORDPRESS_DB_USER
+          value: "wordpressuser"
+        - name: WORDPRESS_DB_PASSWORD
+          value: "password"
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+        - name: apache-config
+          mountPath: /etc/apache2/sites-enabled/000-default.conf
+          subPath: 000-default.conf
+      volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pv-claim
+      - name: apache-config
+        configMap:
+          name: apache-config
